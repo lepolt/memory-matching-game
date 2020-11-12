@@ -84,19 +84,6 @@
     background: orange;
     transform: rotateY(180deg);
 }
-    
-/* .card { */
-    /* flex: 1; */
-
-    /* position: relative;
-    perspective: 800px;  */
-/* } */
-
-/* .card>img {
-    height: 120px;
-    width: 120px;
-
-} */
 
 .hidden {
     display: none !important;
