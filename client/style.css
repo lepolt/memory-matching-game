@@ -1,0 +1,103 @@
+#grid {
+    display: inline-block;
+    /* flex-wrap: wrap; */
+}
+
+#grid.small {
+    width: 544px;
+}
+
+#grid.medium {
+    width: 670px;
+}
+
+#grid.large {
+    width: 796px;
+}
+
+.card-container {
+    height: 120px;
+    width: 120px;
+    position: relative;
+    perspective: 800px;
+    /* flex: 1; */
+    display: block;
+    float: left;
+    margin: 3px;
+}
+
+.card-container .card {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    transform-style: preserve-3d;
+    -webkit-transform-style: preserve-3d;
+    transition: transform 1000ms;
+    /* @include css-transition(transform 1000ms); */
+    cursor: pointer;
+}
+
+.card-container .card:hover:not(.cleared) {
+    box-shadow: 0 0px 5px 2px orangered;
+}
+
+.card img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+}
+
+.card.flipped {
+    transform: rotateY(180deg);
+}
+    
+.card.cleared {
+    cursor: default;
+}
+
+.card.cleared .side {
+    opacity: 0;
+}
+
+.card .side {
+    opacity: 1;
+    margin: 0;
+    display: block;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 4px;
+    overflow: hidden;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+
+    transition: opacity 300ms;
+    transition-timing-function: ease-in-out;
+    /* @include css-transition(opacity 300ms ease-in-out); */
+}
+        
+.card .front {
+    background: blue;
+}
+    
+.card .back {
+    background: orange;
+    transform: rotateY(180deg);
+}
+    
+/* .card { */
+    /* flex: 1; */
+
+    /* position: relative;
+    perspective: 800px;  */
+/* } */
+
+/* .card>img {
+    height: 120px;
+    width: 120px;
+
+} */
+
+.hidden {
+    display: none !important;
+}

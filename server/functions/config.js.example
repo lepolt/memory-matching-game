@@ -1,0 +1,5 @@
+var config = {};
+
+config.APP_ACCESS_KEY = ""
+
+module.exports = config;

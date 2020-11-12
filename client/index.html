@@ -1,0 +1,37 @@
+<html>
+
+<head>
+    <link rel="stylesheet" type="text/css" href="style.css" media="screen"></link>
+    <script src="index.js" async onload="init()"></script>
+</head>
+
+<body>
+
+    <div id="stats">
+        <div class="stat">Moves: <span id="num-moves"></span></div>
+        <div class="stat">Matches found: <span id="num-matches"></span></div>
+        <div class="stat">Matches remaining: <span id="num-matches-remaining"></span></div>
+    </div>
+    <div class="play-area full-width">
+        <div id="loader" class="hidden">
+            <span>Loading game cards...</span>
+        </div>
+
+        <div id="game-over">
+            <div class="message">Game Over! You finished in <span id="num-moves-end"></span> moves!</div>
+    
+            <h5 class="subheader uppercase">Settings</h5>
+            <!-- {{bc-htmlselect label="Number of cards" content=boardOptions value=numCards optionLabelPath="name" optionValuePath="value"}} -->
+      
+            <!-- {{bc-button label="New Game" action=(action "resetGame") classNames="right"}}   -->
+        </div>
+
+        <div id="grid" class="hidden"></div>
+        <div class="blocker hidden"></div>
+      </div>
+    
+
+    </div>
+</body>
+
+</html>
