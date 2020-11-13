@@ -1,23 +1,26 @@
-// function onload() {
-//     console.log("hi");
-// }
 
-// const { debug } = require("console");
+let GRID_SIZE = {
+    small: {
+        name: 'small',
+        rows: 4,
+        cols: 4
+    },
+    medium: {
+        name: 'medium',
+        rows: 4,
+        cols: 5        
+    },
+    large: {
+        name: 'large',
+        rows: 6,
+        cols: 6        
+    }
+};
 
-// let grid = {
-//     size: GRID_SIZE.small
-// };
-// let GRID_SIZE = {
-//     small: 'small',
-//     medium: 'medium',
-//     large: 'large'
-// };
-
-// TODO: Get these out of here.
+// TODO:
 // const FETCH_IMAGES_URL = "http://localhost:5001/js-matching-game/us-central1/fetchImages"
 const FETCH_IMAGES_URL = "https://us-central1-js-matching-game.cloudfunctions.net/fetchImages"
-let rows = 4;
-let cols = 4;
+let gridSize = GRID_SIZE.small
 let isLoading = false;
 let numMoves = 0;
 let numMatches = 0;
@@ -27,12 +30,9 @@ let card2 = null;
 let canInteract = true;
 
 function init() {
-    var numImages = (rows * cols) / 2
+    document.getElementById('board-size-select').addEventListener('input', boardSizeChanged);
 
-    resetStats()
-    resetGameBoard()
-
-    fetchImages(numImages)
+    newGame()
 }
 
 function fetchImages(number) {
@@ -51,16 +51,18 @@ function fetchImages(number) {
 }
 
 function buildGrid(data) {
-    let expected = (rows * cols) / 2
-    let actual = data.length
+    var rows = gridSize.rows;
+    var cols = gridSize.cols;
+    let expected = getExpectedMatches();
+    let actual = data.length;
 
     if (expected == actual) {
         let gridHtml = "";
         let index = 0;
 
         // Add duplicates so they can be matched
-        let cardsAndMatches = data.concat(data)
-        let shuffledCards = shuffle(cardsAndMatches)
+        let cardsAndMatches = data.concat(data);
+        let shuffledCards = shuffle(cardsAndMatches);
 
         for (let i = 0; i < cols; i++) {
             for (let j = 0; j < rows; j++) {
@@ -79,7 +81,7 @@ function buildGrid(data) {
         let grid = document.getElementById('grid');
         grid.innerHTML = gridHtml;
         grid.classList.remove('hidden');
-        grid.classList.add('small');
+        grid.classList.add(gridSize.name);
     }
 }
 
@@ -103,7 +105,6 @@ function cardClicked(event) {
 function handleClickEvent(elCard) {
     // Don't handle clicking cards that are already cleared, or if we are transitioning a flip
     if (!canInteract || elCard.classList.contains('flipped') || elCard.classList.contains('cleared')) { 
-        console.log('nope');
         return;
     }
 
@@ -146,6 +147,7 @@ function checkForMatch(card1, card2) {
         numMoves++;
 
         updateStats()
+        checkForGameOver()
     }
 }
 
@@ -155,7 +157,6 @@ function resetFlippedCards(wasMatch) {
         card2.element.classList.add('cleared');
         card1.element.remove();
         card2.element.remove();    
-        checkForGameOver()
     } else {
         // No match. Flip both back
         card1.element.classList.remove('flipped');
@@ -188,6 +189,8 @@ function shuffle(array) {
 function resetGameBoard() {
     let grid = document.getElementById('grid');
     grid.innerHTML = ""
+
+    document.getElementById('game-over').classList.add('hidden');
 }
 
 function updateStats() {
@@ -197,9 +200,9 @@ function updateStats() {
 }
 
 function resetStats() {
-    numMoves = 0
-    numMatches = 0
-    numMatchesRemaining = (rows * cols) / 2
+    numMoves = 0;
+    numMatches = 0;
+    numMatchesRemaining = getExpectedMatches();
 }
 
 function checkForGameOver() {
@@ -210,15 +213,18 @@ function checkForGameOver() {
 }
 
 function newGame() {
-    resetStats()
-    resetGameBoard()
+    resetStats();
+    resetGameBoard();
 
-    fetchImages(numImages)
+    var numImages = getExpectedMatches()
+    fetchImages(numImages);
 }
-// addEventListener('click', event => {
-//     console.log(`clicked: ${event.target.tagName}`);
-//     if (event.target.tagName.toLowerCase() == 'img') {
-//         handleClickEvent(event.target.parentElement)
-//     }
-// });
 
+function boardSizeChanged(/* event */) {
+    let select = document.getElementById('board-size-select')
+    gridSize = GRID_SIZE[select.value]
+}
+
+function getExpectedMatches() { 
+    return (gridSize.rows * gridSize.cols) / 2;
+}
