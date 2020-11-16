@@ -1,5 +1,15 @@
 var config = {};
 
-config.APP_ACCESS_KEY = ""
+// Unsplash
+config.UNSPLASH_ACCESS_KEY = ""
+
+// Firebase
+config.apiKey = "apiKey";
+config.authDomain = "projectId.firebaseapp.com";
+config.databaseURL = "https://databaseName.firebaseio.com";
+config.storageBucket = "bucket.appspot.com";
+projectId: "",
+messagingSenderId: "",
+appId: ""
 
 module.exports = config;

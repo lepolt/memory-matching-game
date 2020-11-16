@@ -2,48 +2,58 @@ const functions = require('firebase-functions');
 const Unsplash = require('unsplash-js').default;
 const toJson = require('unsplash-js').toJson;
 const fetch = require('node-fetch');
+const firebase = require('firebase');
 var config = require('./config');
 
-const APP_ACCESS_KEY = config.APP_ACCESS_KEY;
-const unsplash = new Unsplash({ accessKey: APP_ACCESS_KEY });
+const UNSPLASH_ACCESS_KEY = config.UNSPLASH_ACCESS_KEY;
+const unsplash = new Unsplash({ accessKey: UNSPLASH_ACCESS_KEY });
 
 global.fetch = fetch;
 
 // Create and Deploy Your First Cloud Functions
 // https://firebase.google.com/docs/functions/write-firebase-functions
 
-exports.helloWorld = functions.https.onRequest((request, response) => {
-  functions.logger.info("Hello logs!", {structuredData: true});
-  response.send("Hello from Firebase!");
-});
-
-// Take the text parameter passed to this HTTP endpoint and insert it into 
-// Cloud Firestore under the path /messages/:documentId/original
-// exports.addMessage = functions.https.onRequest(async (req, res) => {
-//     // Grab the text parameter.
-//     const original = req.query.text;
-//     // Push the new message into Cloud Firestore using the Firebase Admin SDK.
-//     const writeResult = await admin.firestore().collection('messages').add({original: original});
-//     // Send back a message that we've succesfully written the message
-//     res.json({result: `Message with ID: ${writeResult.id} added.`});
-//   });
-
 exports.fetchImages = functions.https.onRequest(async (req, res) => {
     // Grab the count parameter.
-    const count = req.query.count;
+    const count = parseInt(req.query.count, 10);
 
-    // Build the Unsplash request
-    return unsplash.photos.getRandomPhoto({ 
-        count: count,
-        // query: "nature;animals;buildings",
-        content_filter: "high",
-        orientation: "squarish"
-     })
+    getImageData(count)
     .then(toJson)
+    // Build the Unsplash request
+    // return unsplash.photos.getRandomPhoto({ 
+    //     count: count,
+    //     // query: "nature;animals;buildings",
+    //     content_filter: "high",
+    //     orientation: "squarish"
+    //  })
+    // .then(toJson)
     .then(json => {
       // Your code
       res.setHeader('Access-Control-Allow-Origin', '*');
       res.json(json)
       return
     });
-})
+});
+
+async function getImageData(count) {
+  // Init firebase if it's not already
+  if (!firebase.apps.length) {
+    firebase.initializeApp(config.firebaseConfig);
+  }
+
+  // Get a reference to the database service
+  var database = firebase.database();
+
+  const maxIndex = 25000 - count;
+  const randomIndex = Math.floor(Math.random() * maxIndex);
+
+  return await database.ref('photos')
+    .orderByKey()
+    .startAt(randomIndex.toString())
+    .limitToFirst(count)
+    .once('value')
+    .then(snapshot => {
+      // Return an Array of Objects
+      return Object.values(snapshot.val());
+    });
+}
