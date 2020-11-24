@@ -31,8 +31,6 @@ let canInteract = true;
 
 function init() {
     document.getElementById('board-size-select').addEventListener('input', boardSizeChanged);
-
-    newGame()
 }
 
 function fetchImages(number) {
@@ -66,11 +64,13 @@ function buildGrid(data) {
 
         for (let i = 0; i < cols; i++) {
             for (let j = 0; j < rows; j++) {
+                // Build a URL to load
+                var url = `${shuffledCards[index].photo_image_url}?fit=crop&crop=entropy&h=400&w=400`;
                 gridHtml += '<div class="card-container">';
-                gridHtml +=   `<div class="card" data-id="${shuffledCards[index].id}" onclick=cardClicked(event)>`;
+                gridHtml +=   `<div class="card" data-id="${shuffledCards[index].photo_id}" onclick=cardClicked(event)>`;
                 gridHtml +=     '<div class="side front"></div>'
                 gridHtml +=     '<div class="side back">';
-                gridHtml +=       `<img src=${shuffledCards[index].urls.small}">`;
+                gridHtml +=       `<img src=${url}">`;
                 gridHtml +=     '</div>';
                 gridHtml +=   '</div>'
                 gridHtml += '</div>'
@@ -78,23 +78,27 @@ function buildGrid(data) {
                 index++;
             }
         }
-        let grid = document.getElementById('grid');
-        grid.innerHTML = gridHtml;
-        grid.classList.remove('hidden');
-        grid.classList.add(gridSize.name);
+        let game = document.getElementById('game');
+        game.insertAdjacentHTML('afterbegin', gridHtml);
+        game.classList.remove('hidden');
+
+        // Remove old size classes
+        for (obj in Object.keys(GRID_SIZE)) {
+            game.classList.remove(obj.name);
+        }
+        // Add new size
+        game.classList.add(gridSize.name);
     }
 }
 
 function setLoading(isLoading) {
     var loader = document.getElementById("loader");
-    let grid = document.getElementById('grid');
+    let game = document.getElementById('game');
 
     if (isLoading) {
         loader.classList.remove('hidden');
-        grid.classList.add('hidden');
     } else {
         loader.classList.add('hidden');
-        grid.classList.remove('hidden');
     }
 }
 
@@ -186,11 +190,20 @@ function shuffle(array) {
     return array;
 }
 
-function resetGameBoard() {
-    let grid = document.getElementById('grid');
-    grid.innerHTML = ""
+function removeCards() {
+    let game = document.getElementById('game');
+    let oldCards = document.querySelectorAll('#game .card-container')
+    if (oldCards && oldCards.length) {
+        oldCards.forEach(card => {
+            card.remove();    
+        });
+    }
+}
 
-    document.getElementById('game-over').classList.add('hidden');
+function resetGameBoard() {
+    document.getElementById('new-game').classList.add('hidden');
+    document.getElementById('msg-new-game').classList.add('hidden');
+    document.getElementById('msg-game-over').classList.add('hidden');
 }
 
 function updateStats() {
@@ -207,8 +220,11 @@ function resetStats() {
 
 function checkForGameOver() {
     if (numMatchesRemaining == 0) {
-        document.getElementById('game-over').classList.remove('hidden')
-        document.getElementById('num-moves-end').innerText = numMoves
+        removeCards()
+
+        document.getElementById('new-game').classList.remove('hidden');
+        document.getElementById('msg-game-over').classList.remove('hidden');
+        document.getElementById('num-moves-end').innerText = numMoves;
     }
 }
 

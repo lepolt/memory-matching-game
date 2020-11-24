@@ -1,12 +1,7 @@
 const functions = require('firebase-functions');
-const Unsplash = require('unsplash-js').default;
-const toJson = require('unsplash-js').toJson;
 const fetch = require('node-fetch');
 const firebase = require('firebase');
 var config = require('./config');
-
-const UNSPLASH_ACCESS_KEY = config.UNSPLASH_ACCESS_KEY;
-const unsplash = new Unsplash({ accessKey: UNSPLASH_ACCESS_KEY });
 
 global.fetch = fetch;
 
@@ -17,21 +12,16 @@ exports.fetchImages = functions.https.onRequest(async (req, res) => {
     // Grab the count parameter.
     const count = parseInt(req.query.count, 10);
 
-    getImageData(count)
-    .then(toJson)
-    // Build the Unsplash request
-    // return unsplash.photos.getRandomPhoto({ 
-    //     count: count,
-    //     // query: "nature;animals;buildings",
-    //     content_filter: "high",
-    //     orientation: "squarish"
-    //  })
-    // .then(toJson)
-    .then(json => {
+    return getImageData(count)
+    .then(result => {
       // Your code
       res.setHeader('Access-Control-Allow-Origin', '*');
-      res.json(json)
+      res.json(result)
       return
+    })
+    .catch(error => {
+        console.log(error);
+        res.status(500).send(error);
     });
 });
 

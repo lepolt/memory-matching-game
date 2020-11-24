@@ -1,8 +1,5 @@
 var config = {};
 
-// Unsplash
-config.UNSPLASH_ACCESS_KEY = ""
-
 // Firebase
 config.apiKey = "apiKey";
 config.authDomain = "projectId.firebaseapp.com";

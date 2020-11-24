@@ -7,30 +7,36 @@
 
 <body>
 
+    <h1>Memory Matching Game</h1>
     <div id="stats">
         <div class="stat">Moves: <span id="num-moves"></span></div>
         <div class="stat">Matches found: <span id="num-matches"></span></div>
         <div class="stat">Matches remaining: <span id="num-matches-remaining"></span></div>
     </div>
     <div class="play-area full-width">
-        <div id="loader" class="hidden">
-            <span>Loading game cards...</span>
-        </div>
+        <div id="game" class="small">
+            <div id="new-game">
+                <div id="msg-new-game" class="message">Choose board size to start a new game</div>
+                <div id="msg-game-over" class="message hidden">Great job! You finished in <span id="num-moves-end"></span> moves!</div>
+        
+                <span class="settings">Size:
+                    <select id='board-size-select'>
+                        <option value="small">Small</option>
+                        <option value="medium">Medium</option>
+                        <option value="large">Large</option>
+                    </select>    
+                </span>
+        
+                <button onclick=newGame()>New Game</button>
+            </div>
 
-        <div id="game-over" class="hidden">
-            <div class="message">Game Over! You finished in <span id="num-moves-end"></span> moves!</div>
+            
+            <div id="loader" class="hidden">
+                <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
+                <div>Loading game cards...</span>
+            </div>
     
-            <h5 class="subheader uppercase">Settings</h5>
-            <select id='board-size-select'>
-                <option value="small">Small</option>
-                <option value="medium">Medium</option>
-                <option value="large">Large</option>
-            </select>
-    
-            <button onclick=newGame()>New Game</button>
         </div>
-
-        <div id="grid" class="hidden"></div>
         <div id="blocker" class="hidden"></div>
       </div>
     
