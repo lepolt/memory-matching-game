@@ -83,8 +83,8 @@ function buildGrid(data) {
         game.classList.remove('hidden');
 
         // Remove old size classes
-        for (obj in Object.keys(GRID_SIZE)) {
-            game.classList.remove(obj.name);
+        for (var key of Object.keys(GRID_SIZE)) {
+            game.classList.remove(GRID_SIZE[key].name);
         }
         // Add new size
         game.classList.add(gridSize.name);
